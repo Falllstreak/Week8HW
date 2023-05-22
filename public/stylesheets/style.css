@@ -1,0 +1,37 @@
+/* header{
+    text-align: center;
+} */
+/* .formstyle{
+    font-family: 'Kanit', sans-serif;
+    font-size: 25px;
+    font-weight: thin 100;
+    text-align: left; 
+} */
+.hikelistcontainer{
+    margin-bottom: 1%;
+}
+/* .footstyle{
+    font-family: 'Kanit', sans-serif;
+    font-size: 25px;
+    font-weight:    thin 100;
+    color: #A72A32;
+    text-align: center;
+    background-color:#282932;
+    margin-top: 30%;
+}
+.newFont {
+    font-family: 'Kanit', sans-serif;
+    text-align: center;
+    font-size: 40px;
+} */
+.oneHike{
+    color:#2ace77;
+}
+#breakdownStyle{
+    color: #2ace77;    
+    text-align: left;
+    margin-left: 10%;
+    margin-right: 10%;
+    padding: 1%;
+    border: solid;
+}
