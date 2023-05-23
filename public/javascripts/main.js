@@ -12,9 +12,9 @@ let HikeObject = function(pTrail, pWhere, pWhen, pTOD, pDistance, pElevation, pT
   this.ID = Math.random().toString(16).slice(5)
 }
 
-HikeArray.push(new HikeObject("Hike Mountain", "Washington", "2023-05-01", "Evening", "8 Miles", "345 Feet", "3 hours", "This felt so much longer than it was."));
-HikeArray.push(new HikeObject("Hike Hill", "Colorado", "2020-08-22", "Morning", "12 Miles", "570 Feet", "6 hours", "I don't recommend mornings for this one."));
-HikeArray.push(new HikeObject("Hike View", "Oregon", "2018-07-09", "Night", "3 Miles", "200 Feet", "1 hours", "Easiest hike ever!"));
+// HikeArray.push(new HikeObject("Hike Mountain", "Washington", "2023-05-01", "Evening", "8 Miles", "345 Feet", "3 hours", "This felt so much longer than it was."));
+// HikeArray.push(new HikeObject("Hike Hill", "Colorado", "2020-08-22", "Morning", "12 Miles", "570 Feet", "6 hours", "I don't recommend mornings for this one."));
+// HikeArray.push(new HikeObject("Hike View", "Oregon", "2018-07-09", "Night", "3 Miles", "200 Feet", "1 hours", "Easiest hike ever!"));
 
 let selectedTOD = "";
 
@@ -24,10 +24,10 @@ let selectedTOD = "";
 // runs  when dom is loaded
 document.addEventListener("DOMContentLoaded", function(event) {
 
-  createList();
+//  createList();
 
   document.getElementById("buttonAdd").addEventListener("click", function() {
-    HikeArray.push(new HikeObject(
+    let newHike = new HikeObject(
       document.getElementById("trailInput").value,
       document.getElementById("locationInput").value,
       document.getElementById("dateInput").value,
@@ -35,9 +35,21 @@ document.addEventListener("DOMContentLoaded", function(event) {
       document.getElementById("distanceInput").value,
       document.getElementById("trailElevation").value,
       document.getElementById("trailTime").value,
-      document.getElementById("noteInput").value));
+      document.getElementById("noteInput").value);
     
     document.location.href = "index.html#listHikes";
+
+      $.ajax({
+        url : "/addHikes",
+        type: "POST",
+        data: JSON.stringify(newHike),
+        contentType: "application/json; charset=utf-8",
+        sucess: function (result) {
+            console.log(result);
+            document.location.href = "index.html#listHikes";
+        }
+      });
+
   });
 
   $(document).bind("change", "#select-TOD", function(event, ui) {
@@ -84,36 +96,49 @@ function createList() {
   let myul = document.getElementById("hikeListul");
   myul.innerHTML = "";
 
-  HikeArray.forEach(function (oneHike,) { // use handy array forEach method
-    let myLi = document.createElement('li');
-    myLi.classList.add('oneHike');
-    myLi.setAttribute("data-parm", oneHike.ID);
-    myLi.innerHTML = oneHike.trailname + " -    [" + oneHike.when + "]    ";
-    myul.appendChild(myLi);
-  });
+  let ul = document.createElement('ul');
+
+  $.get("/getHikes", function (data, status){
+      HikeArray = data;
+      console.log(HikeArray);
+
+  
+
+          HikeArray.forEach(function (oneHike,) { // use handy array forEach method
+            let myLi = document.createElement('li');
+            myLi.classList.add('oneHike');
+            myLi.setAttribute("data-parm", oneHike.ID);
+            myLi.innerHTML = oneHike.trailname + " -    [" + oneHike.when + "]    ";
+            myul.appendChild(myLi);
+          });
+  
+  
+  
+  
 
 
 
-    // now we have the HTML done to display out list, 
-    // next we make them active buttons
-    // set up an event for each new li item, 
-    let liList = document.getElementsByClassName("oneHike");
-    let newHikeArray = Array.from(liList);
-    newHikeArray.forEach(function (element) {
-        element.addEventListener('click', function () {
-            // get that data-parm we added for THIS particular li as we loop thru them
-            let parm = this.getAttribute("data-parm");  // passing in the record.Id           
-            localStorage.setItem('parm', parm);
-            // but also, to get around a "bug" in jQuery Mobile, take a snapshot of the
-            // current movie array and save it to localStorage as well.
-            let stringHikeArray = JSON.stringify(HikeArray); // convert array to "string"
-            localStorage.setItem('HikeArray', stringHikeArray);
-            // now jump to our page that will use that one item
-            document.location.href = "index.html#hikeBreakdown";
+        // now we have the HTML done to display out list, 
+        // next we make them active buttons
+        // set up an event for each new li item, 
+        let liList = document.getElementsByClassName("oneHike");
+        let newHikeArray = Array.from(liList);
+        newHikeArray.forEach(function (element) {
+            element.addEventListener('click', function () {
+                // get that data-parm we added for THIS particular li as we loop thru them
+                let parm = this.getAttribute("data-parm");  // passing in the record.Id           
+                localStorage.setItem('parm', parm);
+                // but also, to get around a "bug" in jQuery Mobile, take a snapshot of the
+                // current movie array and save it to localStorage as well.
+                let stringHikeArray = JSON.stringify(HikeArray); // convert array to "string"
+                localStorage.setItem('HikeArray', stringHikeArray);
+                // now jump to our page that will use that one item
+                document.location.href = "index.html#hikeBreakdown";
+                });
             });
-        });
-      };
-
+          });
+    };
+    
 
         function GetArrayPointer(localID) {
           for (let i = 0; i < HikeArray.length; i++) {
@@ -121,4 +146,4 @@ function createList() {
                   return i;
               }
           }
-      }
+        }
